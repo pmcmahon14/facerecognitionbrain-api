@@ -21,10 +21,3 @@
   ]
 }
 
-/*
-/ --> res = this is working  //root route
-/signin --> POST = success/fail
-/register --> POST = user
-/profile/:userId --> GET = user
-image --> PUT  --> user
-*/
