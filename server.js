@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const bcrypt = require('bcrypt-nodejs');
 
 const app = express();
 
@@ -11,7 +12,7 @@ const database = {
             id: '123',
             name: 'John',
             email: 'john@gmail.com',
-            password: 'cookies',
+            //password: 'cookies',
             entries: 0,
             joined: new Date()
         },
@@ -19,9 +20,16 @@ const database = {
             id: '124',
             name: 'Sally',
             email: 'sally@gmail.com',
-            password: 'bananas',
+            //password: 'bananas',
             entries: 0,
             joined: new Date()
+        }
+    ],
+    login: [
+        {
+            id: '987',
+            hash: '',
+            email: "john@gmail.com"
         }
     ]
 };
@@ -31,6 +39,14 @@ app.get('/', (req, res) => {
 });
 
 app.post('/signin', (req, res) => {
+    // Load hash from your password DB.
+    bcrypt.compare("apples", '$2a$10$JgA889TsjfHFEsyn9aJCluc0IFJgXi/ZVxHM6ziUIEzjBadGct7FG'
+        , function(err, res) {
+        console.log('first guess', res);
+    });
+    bcrypt.compare("veggies", '$2a$10$JgA889TsjfHFEsyn9aJCluc0IFJgXi/ZVxHM6ziUIEzjBadGct7FG', function(err, res) {
+        console.log('second guess', res);
+    });
     if (req.body.email === database.users[0].email &&
         req.body.password === database.users[0].password) {
         res.json('success');
@@ -40,7 +56,11 @@ app.post('/signin', (req, res) => {
 });
 
 app.post('/register', (req, res) => {
-    const { email, name, password } =req.body;
+    const { email, name, password } = req.body;
+    /*bcrypt.hash(password, null, null, function(err, hash) {
+        console.log(hash);
+    });*/
+
     database.users.push({
         id: '125',
         name: name,
@@ -81,15 +101,10 @@ app.put('/image', (eq, res) => {
     }
 });
 
+
+
 app.listen(3000, () => {
     console.log('app is running on port 3000');
 });
 
-//ENDPOINTS
-/*
-/ --> res = this is working  //root route
-/signin --> POST = success/fail
-/register --> POST = user
-/profile/:userId --> GET = user
-image --> PUT  --> user
-*/
+
