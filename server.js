@@ -10,7 +10,7 @@ const db = knex({
         host : '127.0.0.1',
         user : 'postgres',
         //password
-        password : '',
+        password : 'Marriage-1998!',
         database : 'smart-brain'
     }
 });
@@ -66,12 +66,16 @@ app.post('/register', (req, res) => {
     bcrypt.hash(password, null, null, function(err, hash) {
         console.log(hash);
     });
-    db('users').insert({
+    db('users')
+        .returning('*')
+        .insert({
         email: email,
         name: name,
         joined: new Date()
-    }).then(console.log)
-    res.json(database.users[database.users.length-1]);
+    }).then(user => {
+        res.json(user[0]);
+    })
+    .catch(err => res.status(400).json('unable to register'))
 });
 
 app.get('/profile/:id', (req, res) => {
