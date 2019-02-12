@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt-nodejs');
 const cors = require('cors');
-const knex = require('knex')
+const knex = require('knex');
 
 const db = knex({
     client: 'pg',
@@ -10,13 +10,13 @@ const db = knex({
         host : '127.0.0.1',
         user : 'postgres',
         //password
-        password : 'Marriage-1998!',
+        password : '',
         database : 'smart-brain'
     }
 });
 
 db.select('*').from('users').then(data => {
-    console.log(data);
+    //console.log(data);
 });
 
 const app = express();
@@ -80,16 +80,15 @@ app.post('/register', (req, res) => {
 
 app.get('/profile/:id', (req, res) => {
     const {id} = req.params;
-    let found = false;
-    database.users.forEach(user => {
-        if (user.id === id) {
-            found = true;
-            return res.json(user);
-        }
-    });
-    if(!found) {
-        res.status(400).json('not found');
-    }
+    db.select('*').from('users').where({id})
+        .then(user => {
+            if(user.length) {
+                res.json(user[0])
+            } else {
+                res.status(400).json('not found')
+            }
+    })
+        .catch(err => res.status(400).json('error getting user'))
 });
 
 app.put('/image', (req, res) => {
